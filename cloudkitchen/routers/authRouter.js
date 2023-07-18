@@ -2,9 +2,9 @@ const express = require("express")
 const path = require('path');
 const bcrypt = require("bcrypt")
 const jwt = require('jsonwebtoken');
-const {JWT_KEY}=require("../secrets.js")
-const signupFilePath = path.join(__dirname, '../public/signup.html');
-const loginFilePath = path.join(__dirname, '../public/login.html');
+const { JWT_KEY } = require("../secrets.js")
+const signupFilePath = path.join(__dirname, '../view/signup.html');
+const loginFilePath = path.join(__dirname, '../view/login.html');
 const usermodel = require("../modals/usermodal")
 const authRouter = express.Router();
 authRouter.route("/signup").get(getSignup).post(postSignup)
@@ -33,32 +33,28 @@ async function postSignup(req, res) {
 }
 async function loginuser(req, res) {
     let data = req.body;
-    let user=await usermodel.findOne({ email:data.email}).exec();
-    if(user)
-    {
-        bcrypt.compare(data.password, user.password, function(err, result) {
-           if(result)
-           {
-          
-            let uid=user['_id']; //uid for jwt
-            let token=jwt.sign({payload:uid},JWT_KEY, { expiresIn: 60 * 60 });
-            res.cookie("Loggedin",token,{httpOnly:true, maxAge: 1000 * 60, secure: true,});
-            res.json({
-                message:"sucesss"
-            })
-           }
-           else
-           {
-            res.json({
-                message:"failed"
-            })
-           }
+    let user = await usermodel.findOne({ email: data.email }).exec();
+    if (user) {
+        bcrypt.compare(data.password, user.password, function (err, result) {
+            if (result) {
+
+                let uid = user['_id']; //uid for jwt
+                let token = jwt.sign({ payload: uid }, JWT_KEY, { expiresIn: 60 * 60 });
+                res.cookie("Loggedin", token, { httpOnly: true, maxAge: 1000 * 60, secure: true, });
+                res.json({
+                    message: "sucesss"
+                })
+            }
+            else {
+                res.json({
+                    message: "failed"
+                })
+            }
         });
     }
-    else
-    {
+    else {
         console.log("hello")
-        res.json({message:""});
+        res.json({ message: "" });
     }
     console.log(user)
 }

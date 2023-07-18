@@ -232,7 +232,7 @@ let userdata = [
     }]
 //mini app
 const userRouter = express.Router();
-const usermodel = require("../modals/usermodal")
+const {getusers,getcookies,postuser,setcookies,deleteuser,updateuser}=require("../controller/userController")
 const protectroute=require('./authhelper')
 userRouter.route('/').get(protectroute,getusers).post(postuser).patch(updateuser).delete(deleteuser)
 // userRouter.route('/:id').get(getusersbyid) // next to base
@@ -241,58 +241,6 @@ userRouter.route('/').get(protectroute,getusers).post(postuser).patch(updateuser
 userRouter.route("/getcookies").get(getcookies);
 userRouter.route("/setcookies").get(setcookies);
 
-// function getusersbyid(req, res) {
-//     console.log(req.params.id);
-//     let paramid = req.params.id;
-//     res.json({
-//         message: "req recieved",
-//         data: userdata.filter((obj) => (obj.id == paramid))
-//     })
-// }
 
-function setcookies(req, res) {
-    // res.setHeader("set-cookie", "isLoggedin=false")             
-    res.cookie("isLoggedin", false, { maxAge: 1000 * 60, secure: true, httpOnly: true }) // httponly to prevent acess from frontend
-    res.send("cookie has been set")
-}
-function getcookies(req, res) {
-    let cookies = req.cookies;
-    console.log(cookies);
-    res.send("cookies received")
-}
-
-function postuser(req, res) {
-    console.log(req.body);
-    users = req.body;
-    res.json({
-        message: "data recieved",
-        user: req.body
-    })
-}
-
-
-async function getusers(req, res) { // fetch users from mongo db
-    let allusers = await usermodel.find()
-    // let allusers = await usemodel.findOne({ name: "jobanpreet Singh" })
-    res.json({ message: "users:", data: allusers })
-    // res.send(userdata.map((obj) => (obj.name)));
-}
-async function updateuser(req, res) {
-    console.log('req body data', req.body);
-    //update data in users object
-    let user = await usermodel.findOneAndUpdate({ email: "jobanjp@protonmail.com" }, req.body)
-    res.json({
-        message: "data updated",
-        updateddata: user
-    })
-}
-
-async function deleteuser(req, res) {
-    let user = await usermodel.findOneAndDelete({ email: 'jobanjp@protonmail.com' })
-    res.json({
-        message: "data has been deleted",
-        data: user
-    })
-};
 
 module.exports=userRouter;
