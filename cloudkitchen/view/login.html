@@ -17,7 +17,7 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-image: url('https://images.unsplash.com/photo-1542676032-6e468ada2953?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80');
+            background-image: url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -67,7 +67,9 @@
                 <button type="submit" id="Login" class="btn btn-primary w-100">Log in</button>
             </div>
             <div class="text-center">
-                <a href="http://localhost:3000/auth/signup">Signup?</a>
+                <a href="http://localhost:3000/user/forgotpassword">Forgot Password?</a>
+                <hr>
+                <a href="http://localhost:3000/user/signup">Signup?</a>
             </div>
         </form>
     </div>
@@ -91,7 +93,7 @@
             console.log("email > ", email)
             console.log("password > ", password)
 
-            let resp = await axios.post('/auth/login', {
+            let resp = await axios.post('/user/login', {
 
                 email,
                 password

@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
 const emailval = require("email-validator");
 const bcrypt = require("bcrypt")
+const CryptoJS = require("crypto-js");
+const { JWT_KEY } = require("../secrets.js")
 mongoose.connect("mongodb+srv://joban:yzSJge5kJQHr4mw5@cloudcluster.qvkdum5.mongodb.net/?retryWrites=true&w=majority").then(function (db) {
     console.log("db connected");
     // console.log(db);
@@ -25,6 +27,17 @@ const userSchema = mongoose.Schema({
         required: true,
         minLength: 8
     },
+    role:{
+        type:String,
+        enum:['admin','user','owner','deleiveryboy'],
+        default:"user"
+    },
+    profileimg:{
+        type:String,
+        default:'img/users/default.jpg'
+        
+    },
+    resetToken:String
 
 })
 //hooks
@@ -38,7 +51,7 @@ const userSchema = mongoose.Schema({
 // })
 
 //remove hook
-userSchema.pre('save', function (next) {
+userSchema.pre('save', function (next) { // pre hook encrypts the password
     console.log(this.password);
   
     bcrypt.hash(this.password, 10, (err, hash) => {
@@ -52,6 +65,24 @@ userSchema.pre('save', function (next) {
       next();
     });
   });
+//reset token
+userSchema.methods.createResetToken=function()
+{
+    //use crypto package npm
+    let ciphertext = CryptoJS.AES.encrypt(this._id, JWT_KEY).toString();
+    this.resetToken=ciphertext
+    return this.resetToken;
+}
+//resetpassword handler
+userSchema.methods.resetPassword=function(password,confirmPassword)
+{
+    this.password=password;
+    this.resetToken=undefined;
+}
+
+
+
 //model
+
 const usermodel = mongoose.model("mymodel", userSchema)
 module.exports = usermodel
