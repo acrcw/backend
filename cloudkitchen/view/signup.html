@@ -24,16 +24,17 @@
     }
 
     .signup-container {
-      height: 80vh;
+      height: 90vh;
       padding: 20px;
       background-color: #ffffff;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
       border-radius: 1rem;
+      width:max-content;
     }
 
     .signup-container h2 {
       text-align: center;
-      margin-bottom: 30px;
+      margin-bottom: 20px;
     }
 
     .signup-container .form-group {
@@ -53,22 +54,25 @@
 <body>
   <div class="signup-container">
     <h2>Signup</h2>
-    <form>
+    <form action="/user/signup" method="post" enctype="multipart/form-data">
       <div class="form-group">
         <label for="name">Name</label>
-        <input type="text" class="form-control" id="name" placeholder="Enter name">
+        <input type="text" class="form-control" name="name" placeholder="Enter name">
       </div>
       <div class="form-group">
         <label for="email">Email</label>
-        <input type="email" class="form-control" id="email" placeholder="Enter email">
+        <input type="email" class="form-control" name="email" placeholder="Enter email">
       </div>
       <div class="form-group">
         <label for="password">Password</label>
-        <input type="password" class="form-control" id="password" placeholder="Enter password">
+        <input type="password" class="form-control" name="password" placeholder="Enter password">
       </div>
       <div class="form-group">
         <label for="confirmPassword">Confirm Password</label>
-        <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm password">
+        <input type="password" class="form-control" name="confirmPassword" placeholder="Confirm password">
+      </div>
+      <div class="form-group">
+        <input type="file" class="form-control" name="photo" id="imageUpload" onchange="handleFileChange(event)">
       </div>
       <div class="form-group">
         <button type="submit" id="submit" class="btn btn-primary w-100">Sign up</button>
@@ -87,9 +91,21 @@
   <script src="https://cdn.jsdelivr.net/npm/mui-login/dist/mui-login.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/axios@1.1.2/dist/axios.min.js"></script>
   <script>
+    async function handleFileChange(event) {    
+      const fileInput = document.getElementById('imageUpload');
+      const selectedFile = fileInput.files[0];
+      console.log('Uploading file:', selectedFile);
+      // let res = await axios.post('/user/profileimg');
+      // console.log(res)
+     
+    }
+  </script>
+  <!-- <script>
     let submit = document.getElementById("submit");
     submit.addEventListener('click', async (e) => {
       e.preventDefault();
+       
+      return;
       let name = document.getElementById("name").value;
       let email = document.getElementById("email").value;
       let password = document.getElementById("password").value;
@@ -105,7 +121,7 @@
         confirmpwd
       });
       console.log(resp.data);
-    })
+    }) -->
 
 
   </script>

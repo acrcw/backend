@@ -1,13 +1,43 @@
 const express = require("express")
+
 const userRouter = express.Router();
-const {getAllusers, getusers, getcookies, postuser, setcookies, deleteuser, updateuser ,getuserProfile} = require("../controller/userController");
-const {Logout,sendupdatepage,checkLogin,isAuthorized, getforgetpwd, resetpwd,forgetpassword, getSignup, postSignup, postLogin, getLogin } = require("../controller/authController")
+const multer=require("multer");
+const {getAllusers, getusers, getcookies, postuser, setcookies, deleteuser, updateuser ,getuserProfile, updateProfileImage} = require("../controller/userController");
+const {Logout,sendupdatepage,checkLogin,isAuthorized, getforgetpwd, resetpwd,forgetpassword, getSignup, postSignup, postLogin, getLogin, getresetpage } = require("../controller/authController")
 const protectroute = require('./authhelper')
 // userRouter.route('/').get(protectroute,getusers).post(postuser).patch(updateuser).delete(deleteuser)
-userRouter.route("/signup").get(getSignup).post(postSignup);
+//multer for file upload
+
+const multerStorage=multer.diskStorage({
+    destination:function(req,file,cb)
+    {
+        cb(null,'C:/backend/cloudkitchen/public/Images')
+    },
+    filename:function(req,file,cb)
+    {
+        cb(null,`user-${Date.now()}.jpeg`)
+    }
+
+})
+const filter=function (req,file,cb)
+{
+    if(file.mimetype.startsWith("image"))
+    {
+        cb(null,true)
+    }else
+    {
+        cb(new Error("Not an Image"),false)
+    }
+}
+const upload =multer({
+    storage:multerStorage,
+    fileFilter:filter
+})
+
+userRouter.route("/signup").get(getSignup).post(upload.single("photo"),postSignup);
 userRouter.route("/login").get(getLogin).post(postLogin);
 userRouter.route("/forgotpassword").get(getforgetpwd).post(forgetpassword)
-userRouter.route("/resetpassword/:token").get(getforgetpwd).post(resetpwd)
+userRouter.route("/resetpassword/:token").get(getresetpage).post(resetpwd)
 
 userRouter.route("/allusers").get(checkLogin,isAuthorized(['user']),getAllusers)
 // for user spececific pages

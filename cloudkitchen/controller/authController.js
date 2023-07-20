@@ -2,28 +2,46 @@ const path = require('path');
 const bcrypt = require("bcrypt")
 const jwt = require('jsonwebtoken');
 const { JWT_KEY } = require("../secrets.js")
-const usermodel = require("../modals/usermodal.js")
+const usermodel = require("../modals/usermodal.js");
+const { sendMail } = require('../utitility/nodeMailer.js');
 const signupFilePath = path.join(__dirname, '../view/signup.html');
 const loginFilePath = path.join(__dirname, '../view/login.html');
 const resetpwdFilePath = path.join(__dirname, '../view/forgotpassword.html');
 const updateprofilepath = path.join(__dirname, '../view/updateprofile.html');
+const getresetpath = path.join(__dirname, '../view/resetpage.html');
 module.exports.getforgetpwd = function getforgetpwd(req, res) {
     res.sendFile(resetpwdFilePath)
 }
+module.exports.getresetpage = function getresetpage(req, res) {
+    res.sendFile(getresetpath)
+}
+
+
 module.exports.forgetpassword = async function forgetpassword(req, res) {
     let { email } = req.body;
+    // console.log(email)
     try {
-        const user = await usermodel.findOne({ email: email })
-        if (user == null) {
-            res.status(404).json({
+        const user = await usermodel.findOne({email })
+        
+        if (user ===null) {
+           return res.status(404).json({
                 message: "user doesnt exist"
             })
         }
         else {
+           
             const resetToken = user.createResetToken();
-            let resetPasswordLink = `${req.protocol}://${req.hostname}/resetpassword/${resetToken}`
-            /// send mail to user email
-            //nodemailer
+            console.log(resetToken)
+            let resetPasswordLink = `${req.protocol}://${req.hostname}:${req.socket.localPort}/user/resetpassword/${resetToken}`
+            let obj = {
+                resetPasswordLink: resetPasswordLink,
+                email: email
+            }
+            console.log(obj)
+            sendMail("resetpassword",obj)
+            return res.json({
+                message:"mail has been sent"
+            })
 
         }
 
@@ -36,27 +54,46 @@ module.exports.forgetpassword = async function forgetpassword(req, res) {
 }
 module.exports.resetpwd = async function resetpwd(req, res) {
     try {
-        const token = req.params.token;
-        let { password, confirmPassword } = req.body
-        const user = await usermodel.findOne({ resetToken: token });
-        if (user) {
-            user.resetPassword(password, confirmPassword); // will encrypt and save password 
-            const updatedUser = await user.save();
-            res.status(202).json({
-                message: "user Password Changed"
-            }).redirect("/user/login")
+       
+        let token=req.params.token;
+        // console.log(token)
+        let { email,password, confirmPassword } = req.body
+        // console.log(req.body)
+        
+        jwt.verify(token, JWT_KEY, async function (err, decoded) {
+            if (err) {
+                return res.status(400).json({
+                    message:"token expired"
+                })
+            }
+            else {
+                // console.log(decoded)
+                const user = await usermodel.findOne({ resetToken:token });
+                if(user==null)
+                {
+                    return res.status(400).json({
+                        message:"token expired | One time use only"
+                    })
+                }
+                console.log(user)
+                user.password=password;
+                user.resetToken="";
+                const updatedpassworddoc=await user.save();
+                // console.log(updatedpassworddoc)
+                return res.status(202).json({
+                    message: "user Password Changed"
+                })
+    
+            }
 
-        }
-        else
-        {
-            res.status(404).json({
-                message: "user not found"
-            })
+        });
 
-        }
+    
     }
     catch (err) {
-        console.log(err)
+        res.status(505).json({
+            message: err.message
+        })
     }
 }
 module.exports.getSignup = function getSignup(req, res) {
@@ -65,13 +102,17 @@ module.exports.getSignup = function getSignup(req, res) {
 }
 
 module.exports.postSignup = async function postSignup(req, res) {
+
+    // console.log(req.file.path)
     let data = req.body;
     let rv = await usermodel.create({
-        name: data.name,
-        email: data.email,
-        password: data.password,
-        confirmpassword: data.confirmpwd
+        name: req.body.name,
+        email: req.body.email,
+        password: req.body.password,
+        confirmpassword: req.body.confirmpwd,
+        profileimg: req.file.path
     })
+    sendMail("signup", rv)
     res.redirect("/user/login")
 }
 module.exports.postLogin = async function postLogin(req, res) {
@@ -112,7 +153,7 @@ module.exports.sendupdatepage = function updateprofile(req, res) {
 module.exports.isAuthorized = function isAuthorized(roles) {
 
     return function (req, res, next) {
-       
+
         if (roles.includes(req.role)) {
             next();
         }
@@ -148,6 +189,6 @@ module.exports.checkLogin = function protectroute(req, res, next) {
     }
 }
 module.exports.Logout = function Logout(req, res) {
-    res.cookie("Loggedin","",{ httpOnly: true, maxAge:1, secure: true })
+    res.cookie("Loggedin", "", { httpOnly: true, maxAge: 1, secure: true })
     res.redirect("/user/login");
 }

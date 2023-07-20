@@ -49,20 +49,29 @@
       background-color: #6c757d;
     }
   </style>
-  <title>Forget Password</title>
+  <title>Reset Password</title>
 </head>
 
 <body>
   <div class="login-container">
-    <h2>Forgot Password</h2>
+    <h2>Reset Password</h2>
     <form>
       <div class="form-group">
         <label for="email">Email</label>
         <input type="email" class="form-control" id="email" placeholder="Enter your email">
       </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" class="form-control" id="password" placeholder="Enter a new Password">
+      </div>
+
+      <div class="form-group">
+        <label for="confirmPassword">Confirm Password</label>
+        <input type="password" class="form-control" id="confirmPassword" placeholder="confirm password">
+      </div>
 
       <div class="d-grid">
-        <button type="submit" class="btn btn-primary">Get Link</button>
+        <button type="submit" class="btn btn-primary">Submit</button>
       </div>
       <div class="text-center mt-3">
         <a href="http://localhost:3000/user/login">Back to Login</a>
@@ -77,23 +86,43 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/17.0.2/umd/react-dom.production.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mui-login/dist/mui-login.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/axios@1.1.2/dist/axios.min.js"></script>
+  
   <script>
+    let token="";
+    window.onload = function () {
+      token = window.location.pathname.split("/");
+      token=token[token.length-1]
+    }
+
     let submit = document.querySelector("button[type='submit']");
     submit.addEventListener('click', async (e) => {
       e.preventDefault();
 
       let email = document.getElementById("email").value;
-      console.log("email > ", email);
-      let resp = await axios.post('/user/forgotpassword', {
+      let password = document.getElementById("password").value;
+      let confirmPassword = document.getElementById("confirmPassword").value;
+      
+      let resp = await axios.post(`/user/resetpassword/${token}`, {
 
-        email:email
+        email: email,
+        password: password,
+        confirmPassword: confirmPassword,
+        token:token
       });
       console.log(resp);
-      if (resp.status() ==404) {
-        alert("User does not exist")
-        document.getElementById('email').value = '';
-        document.getElementById('password').value = '';
+      if (resp.status() == 400) {
+        alert("Link has been expired")      }
+      else if (resp.status() == 202)
+      {
+        alert("Password has been changed")
       }
+      else if(resp.status() == 500)
+      {
+        alert("user not found")
+      }
+      //   document.getElementById('email').value = '';
+      document.getElementById('password').value = '';
+      document.getElementById('confirmPassword').value = '';
 
       // Add your logic for password reset here
     });

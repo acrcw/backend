@@ -1,8 +1,11 @@
 const mongoose = require("mongoose");
 const emailval = require("email-validator");
 const bcrypt = require("bcrypt")
-const CryptoJS = require("crypto-js");
+
+const jwt = require('jsonwebtoken');
+
 const { JWT_KEY } = require("../secrets.js")
+
 mongoose.connect("mongodb+srv://joban:yzSJge5kJQHr4mw5@cloudcluster.qvkdum5.mongodb.net/?retryWrites=true&w=majority").then(function (db) {
     console.log("db connected");
     // console.log(db);
@@ -17,7 +20,7 @@ const userSchema = mongoose.Schema({
     email: {
         type: String,
         required: true,
-        unique: [true,"Email Already In Use"],
+        unique: [true, "Email Already In Use"],
         validate: function () {
             return emailval.validate(this.email)
         }
@@ -25,21 +28,24 @@ const userSchema = mongoose.Schema({
     password: {
         type: String,
         required: true,
-        minLength: [8,"Password min length is 8"]
+        minLength: [8, "Password min length is 8"]
     },
-    role:{
-        type:String,
-        enum:['admin','user','owner','delivery'],
-        default:"user"
+    role: {
+        type: String,
+        enum: ['admin', 'user', 'owner', 'delivery'],
+        default: "user"
     },
-    profileimg:{
-        type:String,
-        default:'img/users/default.jpg'
-        
-    },
-    resetToken:String
+    profileimg: {
+        type: String,
+        default: 'img/users/default.jpg'
 
-})
+    },
+    resetToken: {
+        type: String
+    }
+}
+
+)
 //hooks
 //pre hook  // fires before save event
 // userSchema.pre("save", function () {
@@ -52,32 +58,31 @@ const userSchema = mongoose.Schema({
 
 //remove hook
 userSchema.pre('save', function (next) { // pre hook encrypts the password
-    console.log(this.password);
-  
+    // console.log(this.password);
+    if (this.resetToken != "") {
+        // Do not proceed with the hook, return early
+        return next();
+    }
+
     bcrypt.hash(this.password, 10, (err, hash) => {
-      if (err) {
-        console.error(err);
-        return next(err);
-      }
-  
-      this.password = hash;
-      console.log(this.password);
-      next();
+        if (err) {
+            console.error(err);
+            return next(err);
+        }
+
+        this.password = hash;
+        // console.log(this.password);
+        next();
     });
-  });
+});
 //reset token
-userSchema.methods.createResetToken=function()
-{
+userSchema.methods.createResetToken = function () {
     //use crypto package npm
-    let ciphertext = CryptoJS.AES.encrypt(this._id, JWT_KEY).toString();
-    this.resetToken=ciphertext
+    console.log("hello")
+    let token = jwt.sign({ payload: this.email }, JWT_KEY, { expiresIn: 5 * 60 });
+    this.resetToken = token
+    this.save();
     return this.resetToken;
-}
-//resetpassword handler
-userSchema.methods.resetPassword=function(password,confirmPassword)
-{
-    this.password=password;
-    this.resetToken=undefined;
 }
 
 

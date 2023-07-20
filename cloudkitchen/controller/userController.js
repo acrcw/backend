@@ -118,3 +118,15 @@ module.exports.deleteuser = async function deleteuser(req, res) {
         })
     }
 };
+
+module.exports.updateProfileImage = async function updateProfileImage(req, res,next) {
+    if (!req.file) {
+        return res.status(500).send('No image file provided.');
+    }
+    else {
+        console.log(req.file.path)
+        console.log(req.body)
+        next();
+        // res.sendFile(req.file.path)
+    }
+}
