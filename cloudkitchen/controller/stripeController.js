@@ -1,6 +1,5 @@
 const planmodel = require('../modals/mealmodal');
 const path = require('path');
-const PRICE_ID=100;
 const usermodel = require('../modals/usermodal');
 const stripe = require('stripe')('sk_test_51NVoSgSFnLmMeVsDYJcCwzpQmv0MX8VgN791e2ypGGyy9BHzGkoEz5VrjKjfP22SWTMSYKxFbLzdu4XsyDx6vIgS00WL8heiGv');
 const checkOutPath = path.join(__dirname, '../view/checkout.html');
