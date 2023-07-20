@@ -1,5 +1,5 @@
 const planmodel = require("../modals/mealmodal");
-
+const stripe = require('stripe')('sk_test_51NVoSgSFnLmMeVsDYJcCwzpQmv0MX8VgN791e2ypGGyy9BHzGkoEz5VrjKjfP22SWTMSYKxFbLzdu4XsyDx6vIgS00WL8heiGv');
 module.exports.getAllPlans = async function getAllPlans(req, res) {
     try {
         console.log("hello")
@@ -7,7 +7,7 @@ module.exports.getAllPlans = async function getAllPlans(req, res) {
         if (plans) {
             return res.json({
                 message: "all plans recived",
-                totalplans:plans.length,
+                totalplans: plans.length,
                 data: plans
             })
         }
@@ -49,11 +49,30 @@ module.exports.getPlan = async function getPlan(req, res) {
 module.exports.createPlan = async function createPlan(req, res) {
     try {
         let plandata = req.body;
-        let createdPlan = await planmodel.create(plandata);
-        return res.json({
-            message: "plan created Sucessfully",
-            data: createdPlan
+        const createdproduct = await stripe.products.create({
+            name: plandata.name,
+            description: plandata.description,
+            default_price_data: {
+                currency: "INR",
+                unit_amount: plandata.price * 100
+            }
         })
+        console.log(createdproduct);
+        plandata.stripeId = createdproduct.id;
+        let createdPlan = await planmodel.create(plandata);
+        res.json({
+            message: "plan created Sucessfully & product created in stripe",
+            plan: createdPlan,
+            product: createdproduct
+        })
+        // createprices; 
+
+
+
+
+
+
+
     }
     catch (err) {
         return res.status(500).json({
@@ -108,10 +127,10 @@ module.exports.updatePlan = async function updatePlan(req, res) {
     }
 }
 // get top three plans
-module.exports.topthreeplans=async function topthreeplans(req, res) {
+module.exports.topthreeplans = async function topthreeplans(req, res) {
     try {
         const top3plans = await planmodel.find().sort({ ratingAverage: -1 }).limit(3)
-        return res.json({ message: "top 3",data:top3plans })
+        return res.json({ message: "top 3", data: top3plans })
     }
     catch (err) {
         return res.status(500).json({ message: "plans not found" })

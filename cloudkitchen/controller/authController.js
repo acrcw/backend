@@ -135,7 +135,7 @@ module.exports.checkLogin = function protectroute(req, res, next) {
                 const user = await usermodel.findById(decoded.payload)
                 // console.log(user)
                 req.role = user.role;
-                req.id = user._id
+                req.id = user.id
                 next();
             }
 
