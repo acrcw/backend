@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 mongoose.connect("mongodb+srv://joban:yzSJge5kJQHr4mw5@cloudcluster.qvkdum5.mongodb.net/?retryWrites=true&w=majority").then(function (db) {
     console.log("review db connected");
-    // console.log(db);
 }).catch(function (err) {
     console.log(err);
 })
