@@ -22,27 +22,26 @@ const planSchema = mongoose.Schema({
     },
     ratingAverage: {
         type: Number,
+        min: 0,
+        max: 100,
+        default:0
     },
     discount: {
         type: Number,
         validate: [function () {
             return this.discount < 100
-        }, "discount should not exceed 100"]
+        }, "discount should not exceed 100"],
+        default:0
     },
+    totalReviews:{
+        type: Number,
+        default:0
+    }
 
 })
 
-const planmodel = mongoose.model("planModel", planSchema)
-async function createPlan() {
-    let plan = {
-        name: "combo",
-        duration: 30,
-        price: 1000,
-        ratingAverage: 5,
-        discount: 20
-    }
-    const doc = new planmodel(plan);
-    await doc.save();
-}
+const planmodel = mongoose.model("planmodel", planSchema)
+
 // createPlan();
+
 module.exports = planmodel

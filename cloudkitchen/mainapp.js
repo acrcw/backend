@@ -5,14 +5,18 @@ const cookieParser = require("cookie-parser")
 
 app.use(express.json()); // middleware fnc used in post // to convert data into json
 app.use(cookieParser()) // to use as middleware  to acess cokkies in request and response object
- 
-app.listen(3000)   
+
+app.listen(3000)
 //mini app  
-const userRouter = require("./routers/userRouter")  
+const userRouter = require("./routers/userRouter")
+const planRouter = require("./routers/planRouter");
+const reviewRouter = require("./routers/reviewRouter");
 app.route("/").get(redirecttologin)
- function redirecttologin(req, res) { 
+function redirecttologin(req, res) {
     // console.log(__dirname)
     res.redirect("/user/login");
 }
 
-app.use('/user', userRouter) // base routes    
+app.use('/user', userRouter) // base routes
+app.use('/plans', planRouter) //plan routes   
+app.use('/reviews', reviewRouter) //plan routes   

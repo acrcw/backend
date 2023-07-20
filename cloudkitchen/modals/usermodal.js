@@ -17,7 +17,7 @@ const userSchema = mongoose.Schema({
     email: {
         type: String,
         required: true,
-        unique: true,
+        unique: [true,"Email Already In Use"],
         validate: function () {
             return emailval.validate(this.email)
         }
@@ -25,11 +25,11 @@ const userSchema = mongoose.Schema({
     password: {
         type: String,
         required: true,
-        minLength: 8
+        minLength: [8,"Password min length is 8"]
     },
     role:{
         type:String,
-        enum:['admin','user','owner','deleiveryboy'],
+        enum:['admin','user','owner','delivery'],
         default:"user"
     },
     profileimg:{
@@ -84,5 +84,5 @@ userSchema.methods.resetPassword=function(password,confirmPassword)
 
 //model
 
-const usermodel = mongoose.model("mymodel", userSchema)
+const usermodel = mongoose.model("usermodel", userSchema)
 module.exports = usermodel

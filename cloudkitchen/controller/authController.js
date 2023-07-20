@@ -77,7 +77,7 @@ module.exports.postSignup = async function postSignup(req, res) {
 module.exports.postLogin = async function postLogin(req, res) {
     let data = req.body;
     let user = await usermodel.findOne({ email: data.email }).exec();
-    console.log(user.password)
+    // console.log(user.password)
     if (user) {
         bcrypt.compare(data.password, user.password, function (err, result) {
             if (result) {
@@ -99,7 +99,7 @@ module.exports.postLogin = async function postLogin(req, res) {
     }
     else {
         console.log("hello")
-        res.json({ message: "" });
+        res.json({ message: "user doesnt exist" });
     }
     console.log(user)
 }
@@ -112,6 +112,7 @@ module.exports.sendupdatepage = function updateprofile(req, res) {
 module.exports.isAuthorized = function isAuthorized(roles) {
 
     return function (req, res, next) {
+       
         if (roles.includes(req.role)) {
             next();
         }
@@ -122,12 +123,12 @@ module.exports.isAuthorized = function isAuthorized(roles) {
 
 }
 //protect route 
-module.exports.protectallusers = function protectroute(req, res, next) {
+module.exports.checkLogin = function protectroute(req, res, next) {
     if (req.cookies.Loggedin) {
         // var decoded = jwt.verify(req.cookies.Loggedin, JWT_KEY);
         jwt.verify(req.cookies.Loggedin, JWT_KEY, async function (err, decoded) {
             if (err) {
-                return res.status(302).redirect("/login")
+                return res.status(302).redirect("/user/login")
             }
             else {
                 // console.log(decoded)

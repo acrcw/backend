@@ -5,12 +5,10 @@ function protectroute(req, res, next) {
         // var decoded = jwt.verify(req.cookies.Loggedin, JWT_KEY);
         jwt.verify(req.cookies.Loggedin, JWT_KEY, function (err, decoded) {
             if (err) {
-                return res.json({
-                    message: "unauthorized access"
-                })
+                return res.redirect("/user/login")
             }
             else {
-                console.log(decoded) // bar
+                // console.log(decoded) // bar
                 next();
             }
 
@@ -19,9 +17,7 @@ function protectroute(req, res, next) {
 
     }
     else {
-        return res.json({
-            message: "unauthorized access"
-        })
+        return res.redirect("/user/login")
     }
 }
 module.exports = protectroute
