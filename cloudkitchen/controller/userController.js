@@ -10,7 +10,7 @@ module.exports.getcookies = function getcookies(req, res) {
     console.log(cookies);
     res.send("cookies received")
 }
-
+//done
 module.exports.postuser = function postuser(req, res) {
     console.log(req.body);
     users = req.body;
@@ -21,7 +21,7 @@ module.exports.postuser = function postuser(req, res) {
 }
 
 
-
+//done
 module.exports.getuserProfile = async function getuserProfile(req, res) { // fetch user from mongo db
     let uid = req.id;
     let user = await usermodel.findById(uid);
@@ -53,6 +53,7 @@ module.exports.getAllusers = async function getAllusers(req, res) { // fetch use
     }
 
 }
+//done
 module.exports.updateuser = async function updateuser(req, res) {
     // console.log('req body data', req.body);
     //update data in users object
@@ -118,7 +119,7 @@ module.exports.deleteuser = async function deleteuser(req, res) {
         })
     }
 };
-
+//done
 module.exports.updateProfileImage = async function updateProfileImage(req, res,next) {
     if (!req.file) {
         return res.status(500).send('No image file provided.');

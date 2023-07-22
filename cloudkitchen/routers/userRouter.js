@@ -1,5 +1,6 @@
 const express = require("express")
-
+const path = require('path');
+const imgfolder = path.join(__dirname, '../public/Images');
 const userRouter = express.Router();
 const multer=require("multer");
 const {getAllusers, getusers, getcookies, postuser, setcookies, deleteuser, updateuser ,getuserProfile, updateProfileImage} = require("../controller/userController");
@@ -7,11 +8,12 @@ const {Logout,sendupdatepage,checkLogin,isAuthorized, getforgetpwd, resetpwd,for
 const protectroute = require('./authhelper')
 // userRouter.route('/').get(protectroute,getusers).post(postuser).patch(updateuser).delete(deleteuser)
 //multer for file upload
-
+let loc=imgfolder.replaceAll("\\","/")
+// console.log(loc)
 const multerStorage=multer.diskStorage({
     destination:function(req,file,cb)
     {
-        cb(null,'C:/backend/cloudkitchen/public/Images')
+        cb(null,loc)
     },
     filename:function(req,file,cb)
     {

@@ -9,13 +9,14 @@ const loginFilePath = path.join(__dirname, '../view/login.html');
 const resetpwdFilePath = path.join(__dirname, '../view/forgotpassword.html');
 const updateprofilepath = path.join(__dirname, '../view/updateprofile.html');
 const getresetpath = path.join(__dirname, '../view/resetpage.html');
+//done
 module.exports.getforgetpwd = function getforgetpwd(req, res) {
     res.sendFile(resetpwdFilePath)
 }
+//done
 module.exports.getresetpage = function getresetpage(req, res) {
     res.sendFile(getresetpath)
 }
-
 
 module.exports.forgetpassword = async function forgetpassword(req, res) {
     let { email } = req.body;
@@ -96,6 +97,7 @@ module.exports.resetpwd = async function resetpwd(req, res) {
         })
     }
 }
+//done
 module.exports.getSignup = function getSignup(req, res) {
     // console.log(__dirname)
     res.sendFile(signupFilePath)
@@ -144,9 +146,11 @@ module.exports.postLogin = async function postLogin(req, res) {
     }
     console.log(user)
 }
+//done
 module.exports.getLogin = function getLogin(req, res) {
     res.sendFile(loginFilePath)
 }
+//done
 module.exports.sendupdatepage = function updateprofile(req, res) {
     res.sendFile(updateprofilepath)
 }

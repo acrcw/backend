@@ -1,5 +1,6 @@
 const planmodel = require("../modals/mealmodal");
 const stripe = require('stripe')('sk_test_51NVoSgSFnLmMeVsDYJcCwzpQmv0MX8VgN791e2ypGGyy9BHzGkoEz5VrjKjfP22SWTMSYKxFbLzdu4XsyDx6vIgS00WL8heiGv');
+//done
 module.exports.getAllPlans = async function getAllPlans(req, res) {
     try {
         console.log("hello")
@@ -23,6 +24,7 @@ module.exports.getAllPlans = async function getAllPlans(req, res) {
         })
     }
 }
+//done
 module.exports.getPlan = async function getPlan(req, res) {
     try {
 
@@ -46,6 +48,7 @@ module.exports.getPlan = async function getPlan(req, res) {
         })
     }
 }
+//done
 module.exports.createPlan = async function createPlan(req, res) {
     try {
         let plandata = req.body;
@@ -95,6 +98,7 @@ module.exports.deletePlan = async function deletePlan(req, res) {
         })
     }
 }
+//done
 module.exports.updatePlan = async function updatePlan(req, res) {
     try {
         let id = req.params.id;

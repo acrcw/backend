@@ -31,6 +31,7 @@ module.exports.topthreereviews = async function topthreereviews(req, res) {
         return res.status(500).json({ message: "review not found" })
     }
 }
+//done
 module.exports.getPlanReviews = async function getPlanReviews(req, res) {
     try {
         let planid = req.params.planid
@@ -55,6 +56,7 @@ module.exports.getPlanReviews = async function getPlanReviews(req, res) {
         })
     }
 }
+//done
 module.exports.createReview = async function createReview(req, res) {
     try {
         let planId = req.params.plan
@@ -84,6 +86,7 @@ module.exports.createReview = async function createReview(req, res) {
         })
     }
 }
+//done
 module.exports.updateReview = async function updateReview(req, res) {
     try {
         let reviewid = req.params.reviewid
@@ -115,6 +118,7 @@ module.exports.updateReview = async function updateReview(req, res) {
         })
     }
 }
+
 module.exports.deleteReview = async function deleteReview(req, res) {
     try {
         let id = req.params.reviewid;
