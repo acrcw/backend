@@ -1,5 +1,6 @@
 const path = require('path');
 const bcrypt = require("bcrypt")
+const fs = require('fs');
 const jwt = require('jsonwebtoken');
 const { JWT_KEY } = require("../secrets.js")
 const usermodel = require("../modals/usermodal.js");
@@ -112,8 +113,9 @@ module.exports.postSignup = async function postSignup(req, res) {
         email: req.body.email,
         password: req.body.password,
         confirmpassword: req.body.confirmpwd,
-        profileimg: req.file.path
+        profileimg: fs.readFileSync(`${req.file.path}`)
     })
+    fs.unlink
     sendMail("signup", rv)
     res.redirect("/user/login")
 }

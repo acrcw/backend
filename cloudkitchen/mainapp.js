@@ -23,9 +23,9 @@ app.use('/plans', planRouter) //plan routes
 app.use('/reviews', reviewRouter) //plan routes   
 app.use('/stripe', stripeRouter) //plan routes   
 
-async function createprice() {
-    const price = await stripe.prices.create({
-        product:"abc",
-        unit_amount: 1000,
-        currency: 'inr',
-    })}
+// async function createprice() {
+//     const price = await stripe.prices.create({
+//         product:"abc",
+//         unit_amount: 1000,
+//         currency: 'inr',
+//     })}

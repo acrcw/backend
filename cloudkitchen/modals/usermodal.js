@@ -35,14 +35,13 @@ const userSchema = mongoose.Schema({
         enum: ['admin', 'user', 'owner', 'delivery'],
         default: "user"
     },
-    profileimg: {
-        type: String,
-        default: 'img/users/default.jpg'
-
-    },
     resetToken: {
         type: String,
         default:""
+    },
+    profileimg:{
+        data: Buffer,
+        contentType: String
     }
 }
 
